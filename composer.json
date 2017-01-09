@@ -1,0 +1,21 @@
+{
+  "name": "chrispecoraro/laravel-controller-generator",
+  "description": "Laravel generators to generate scaffolding using PHP7",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Christopher Pecoraro",
+      "email": "chrispecoraro@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+  },
+  "autoload": {
+    "psr-4": {
+      "ChrisPecoraro\\LCG\\": "src/"
+    }
+  }
+}
+}

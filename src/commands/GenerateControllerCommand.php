@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace ChrisPecoraro\LCG\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Routing\Console\ControllerMakeCommand;
