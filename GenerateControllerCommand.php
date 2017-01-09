@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Routing\Console\ControllerMakeCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -10,19 +9,18 @@ use Symfony\Component\Console\Input\InputOption;
 class GenerateControllerCommand extends ControllerMakeCommand
 {
     /**
-     * The name and signature of the console command.
+     * The signature of the console command.
      *
      * @var string
      */
+    protected $signature = 'make:php7controller:for {model*} {--type=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate PHP7-based web controllers';
-    protected $type = 'Controller';
-    protected $signature = 'make:php7controller:for {model*}  {--type=} {--model} {--resource}';
+    protected $description = 'Generate PHP7-based controllers';
 
     /**
      * Get the desired class name from the input.
@@ -33,30 +31,32 @@ class GenerateControllerCommand extends ControllerMakeCommand
     {
         return $this->argument('model');
     }
+
     /**
      * Get the stub file for the generator.
      *
      * @return string
      */
-    protected function getStub()
+    protected function getStub(): string
     {
-            if ($this->option('type') === 'web'){
-                return __DIR__ . '/stubs/php7.web.controller.stub';
-            }
-            else if ($this->option('type') === 'api') {
-                return __DIR__ . '/stubs/php7.api.controller.stub';
-            }
-            return parent::getStub();
+        if ($this->option('type') === 'web') {
+            return __DIR__ . '/stubs/php7.web.controller.stub';
+        } else if ($this->option('type') === 'api') {
+            return __DIR__ . '/stubs/php7.api.controller.stub';
+        }
+        return parent::getStub();
     }
+
     /**
      * Build the class with the given name.
      *
      * Remove the base controller import if we are already in base namespace.
      *
-     * @param  string  $name
+     * @param  string $name
+     * @param  string $model
      * @return string
      */
-    protected function buildClassWithModel($name, $model)
+    protected function buildClassWithModel($name, $model): string
     {
 
         $stub = $this->files->get($this->getStub());
@@ -83,34 +83,45 @@ class GenerateControllerCommand extends ControllerMakeCommand
 
     }
 
-    public function fire()
+    public function handle()
     {
         $models = $this->getNameInput();
-        foreach ($models as $model){
+        foreach ($models as $model) {
             $controllerName = str_plural($model) . 'Controller';
-            $controllerNameWithPath  = $this->parseName($controllerName);
+            $controllerNameWithPath = $this->parseName($controllerName);
 
             $model = $this->parseName($model);
             $path = $this->getPath($controllerNameWithPath);
 
-            if ($this->alreadyExists($controllerName ) ){
-                $this->error($this->type.' already exists!');
+            if ($this->alreadyExists($controllerName)) {
+                $this->error($this->type . ' already exists!');
                 return false;
             }
 
             $this->makeDirectory($path);
             $this->files->put($path, $this->buildClassWithModel($controllerNameWithPath, $model));
         }
-        $this->info($this->type.' created successfully.');
+        $this->info( 'Controllers successfully built for '. implode(', ',$models).'.');
     }
 
-    protected function getArguments()
+    /**
+     * @return array
+     */
+    protected function getArguments(): array
     {
         return [
             ['model', InputArgument::REQUIRED, 'The model.'],
         ];
     }
 
-
+    /**
+     * @return array
+     */
+    protected function getOptions(): array
+    {
+        return [
+            ['type', null, InputOption::VALUE_REQUIRED, 'Controller Type'],
+        ];
+    }
 
 }
