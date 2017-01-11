@@ -41,10 +41,8 @@ class GenerateControllerCommand extends ControllerMakeCommand
     {
         if ($this->option('type') === 'web') {
             return __DIR__ . '/../stubs/controller/web.controller.stub';
-        } else if ($this->option('type') === 'api') {
-            return __DIR__ . '/../stubs/controller/api.controller.stub';
         }
-        return parent::getStub();
+        return __DIR__ . '/../stubs/controller/api.controller.stub';
     }
 
     /**
@@ -55,11 +53,23 @@ class GenerateControllerCommand extends ControllerMakeCommand
     protected function getRouteStub(): string
     {
         if ($this->option('type') === 'web') {
-            return __DIR__ . '/../stubs/route/api.route.stub';
-        } else if ($this->option('type') === 'api') {
-            return __DIR__ . '/../stubs/route/web.controller.stub';
+            return __DIR__ . '/../stubs/route/web.route.stub';
         }
-        return parent::getStub();
+        return __DIR__ . '/../stubs/route/api.route.stub';
+    }
+
+
+    /**
+     * Get the route stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getTestStub(): string
+    {
+        if ($this->option('type') === 'web') {
+            return __DIR__ . '/../stubs/test/web.route.test.stub';
+        }
+        return __DIR__ . '/../stubs/test/api.route.test.stub';
     }
 
     /**
@@ -72,6 +82,16 @@ class GenerateControllerCommand extends ControllerMakeCommand
         $stub = $this->files->get($this->getRouteStub());
         $file = $this->replaceClass($stub, $name);
         return str_replace('DummyModelPluralVariable', str_plural(lcfirst(class_basename($model))), $file);
+    }
+
+    /**
+     * @param string $model
+     * @return string
+     */
+    protected function buildTest(string $model) : string
+    {
+        $stub = $this->files->get($this->getTestStub());
+        return str_replace(['DummyModelPluralVariable', 'DummyModelClass'], [str_plural(lcfirst(class_basename($model))), $model] , $stub);
     }
 
     /**
@@ -127,6 +147,7 @@ class GenerateControllerCommand extends ControllerMakeCommand
             $this->makeDirectory($path);
             $this->files->put($path, $this->buildClassWithModel($controllerNameWithPath, $model));
             $this->files->append('routes/'.$this->option('type') . '.php', "\n" . $this->buildRoute($controllerNameWithPath, $model));
+            $this->files->put('tests/'. $model . ucfirst($this->option('type')) . 'RoutesTest.php', $this->buildTest($model));
 
         }
         $this->info('Controllers successfully built for ' . implode(', ', $models) . '.');
