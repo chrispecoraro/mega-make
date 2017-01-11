@@ -1,6 +1,6 @@
 {
   "name": "chrispecoraro/laravel-controller-generator",
-  "description": "Laravel generators to generate scaffolding using PHP7",
+  "description": "Laravel generators to generate scaffolding using PHP 7.x",
   "type": "library",
   "license": "MIT",
   "authors": [

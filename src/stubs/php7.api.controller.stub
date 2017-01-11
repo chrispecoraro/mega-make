@@ -15,7 +15,7 @@ class DummyClass extends Controller
      */
     public function index() : Response
     {
-        //
+        return DummyModelClass::all()->paginate(15);
     }
 
     /**
