@@ -40,9 +40,9 @@ class GenerateControllerCommand extends ControllerMakeCommand
     protected function getStub(): string
     {
         if ($this->option('type') === 'web') {
-            return __DIR__ . '/stubs/php7.web.controller.stub';
+            return __DIR__ . '../stubs/php7.web.controller.stub';
         } else if ($this->option('type') === 'api') {
-            return __DIR__ . '/stubs/php7.api.controller.stub';
+            return __DIR__ . '../stubs/php7.api.controller.stub';
         }
         return parent::getStub();
     }
