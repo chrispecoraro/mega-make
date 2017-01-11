@@ -33,18 +33,45 @@ class GenerateControllerCommand extends ControllerMakeCommand
     }
 
     /**
-     * Get the stub file for the generator.
+     * Get the controller stub file for the generator.
      *
      * @return string
      */
-    protected function getStub(): string
+    protected function getControllerStub(): string
     {
         if ($this->option('type') === 'web') {
-            return __DIR__ . '../stubs/php7.web.controller.stub';
+            return __DIR__ . '/../stubs/controller/web.controller.stub';
         } else if ($this->option('type') === 'api') {
-            return __DIR__ . '../stubs/php7.api.controller.stub';
+            return __DIR__ . '/../stubs/controller/api.controller.stub';
         }
         return parent::getStub();
+    }
+
+    /**
+     * Get the route stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getRouteStub(): string
+    {
+        if ($this->option('type') === 'web') {
+            return __DIR__ . '/../stubs/route/api.route.stub';
+        } else if ($this->option('type') === 'api') {
+            return __DIR__ . '/../stubs/route/web.controller.stub';
+        }
+        return parent::getStub();
+    }
+
+    /**
+     * @param string $name
+     * @param string $model
+     * @return string
+     */
+    protected function buildRoute(string $name, string $model) : string
+    {
+        $stub = $this->files->get($this->getRouteStub());
+        $file = $this->replaceClass($stub, $name);
+        return str_replace('DummyModelPluralVariable', str_plural(lcfirst(class_basename($model))), $file);
     }
 
     /**
@@ -56,10 +83,10 @@ class GenerateControllerCommand extends ControllerMakeCommand
      * @param  string $model
      * @return string
      */
-    protected function buildClassWithModel($name, $model): string
+    protected function buildClassWithModel(string $name, string $model): string
     {
 
-        $stub = $this->files->get($this->getStub());
+        $stub = $this->files->get($this->getControllerStub());
 
         $file = $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
 
@@ -90,7 +117,6 @@ class GenerateControllerCommand extends ControllerMakeCommand
             $controllerName = str_plural($model) . 'Controller';
             $controllerNameWithPath = $this->parseName($controllerName);
 
-            $model = $this->parseName($model);
             $path = $this->getPath($controllerNameWithPath);
 
             if ($this->alreadyExists($controllerName)) {
@@ -100,8 +126,10 @@ class GenerateControllerCommand extends ControllerMakeCommand
 
             $this->makeDirectory($path);
             $this->files->put($path, $this->buildClassWithModel($controllerNameWithPath, $model));
+            $this->files->append('routes/'.$this->option('type') . '.php', "\n" . $this->buildRoute($controllerNameWithPath, $model));
+
         }
-        $this->info( 'Controllers successfully built for '. implode(', ',$models).'.');
+        $this->info('Controllers successfully built for ' . implode(', ', $models) . '.');
     }
 
     /**
