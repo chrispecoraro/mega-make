@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace ChrisPecoraro\LCG\Commands;
 
 use Illuminate\Routing\Console\ControllerMakeCommand;
 use Symfony\Component\Console\Input\InputArgument;
