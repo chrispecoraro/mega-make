@@ -15,8 +15,9 @@ class DummyClass extends Controller
      */
     public function index() : Response
     {
-        $data = [];
-        return response()->view('home', $data);
+        $DummyModelVariable = DummyModelClass::all()->paginate;
+        return View::make('DummyModelPluralVariable.index')
+                    ->with('DummyModelPluralVariable', $DummyModelPluralVariable);
     }
 
     /**
@@ -26,8 +27,8 @@ class DummyClass extends Controller
      */
     public function create() : Response
     {
-        $data = [];
-         return response()->view('', $data, 200);
+         $data = [];
+         return response()->view('DummyModelPluralVariable.create', $data, 200);
     }
 
     /**
@@ -50,8 +51,8 @@ class DummyClass extends Controller
      */
     public function show(DummyModelClass $DummyModelVariable) : Response
     {
-        $data = [];
-        return response()->view('', $data, 200);
+         return View::make('DummyModelPluralVariable.show')
+                     ->with('DummyModelVariable', $DummyModelVariable);
     }
 
     /**
@@ -63,7 +64,7 @@ class DummyClass extends Controller
     public function edit(DummyModelClass $DummyModelVariable) : Response
     {
         $data = [];
-        return response()->view('', $data, 200);
+        return view('DummyModelPluralVariable.edit')->with('DummyModelVariable', $DummyModelVariable);
     }
 
     /**

@@ -81,7 +81,7 @@ class GenerateControllerCommand extends ControllerMakeCommand
     {
         $stub = $this->files->get($this->getRouteStub());
         $file = $this->replaceClass($stub, $name);
-        return str_replace('DummyModelPluralVariable', str_plural(lcfirst(class_basename($model))), $file);
+        return str_replace('DummyModelPluralVariable', $this->getPluralVariableNameFromClass($model), $file);
     }
 
     /**
@@ -91,7 +91,7 @@ class GenerateControllerCommand extends ControllerMakeCommand
     protected function buildTest(string $model) : string
     {
         $stub = $this->files->get($this->getTestStub());
-        return str_replace(['DummyModelPluralVariable', 'DummyModelClass'], [str_plural(lcfirst(class_basename($model))), $model] , $stub);
+        return str_replace(['DummyModelPluralVariable', 'DummyModelClass'], [$this->getPluralVariableNameFromClass($model), $model] , $stub);
     }
 
     /**
@@ -113,10 +113,11 @@ class GenerateControllerCommand extends ControllerMakeCommand
         $controllerNamespace = $this->getNamespace($name);
 
         $replace = [];
-
+        $pluralVariableName = $this->getPluralVariableNameFromClass($model);
         $modelClass = $this->parseModel($model);
 
         $replace = [
+            'DummyModelPluralVariable' => $pluralVariableName,
             'DummyFullModelClass' => $modelClass,
             'DummyModelClass' => class_basename($modelClass),
             'DummyModelVariable' => lcfirst(class_basename($modelClass)),
@@ -171,6 +172,15 @@ class GenerateControllerCommand extends ControllerMakeCommand
         return [
             ['type', null, InputOption::VALUE_REQUIRED, 'Controller Type'],
         ];
+    }
+
+    /**
+     * @param string $model
+     * @return string
+     */
+    private function getPluralVariableNameFromClass(string $model): string
+    {
+        return str_plural(lcfirst(class_basename($model)));
     }
 
 }
