@@ -13,9 +13,9 @@ class DummyClass extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : Response
+    public function index(): Response
     {
-        return DummyModelClass::all()->paginate(15);
+        return DummyModelClass::all();
     }
 
     /**
@@ -24,7 +24,7 @@ class DummyClass extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : Response
+    public function store(Request $request): Response
     {
         //
     }
@@ -35,7 +35,7 @@ class DummyClass extends Controller
      * @param  \DummyFullModelClass  $DummyModelVariable
      * @return \Illuminate\Http\Response
      */
-    public function show(DummyModelClass $DummyModelVariable) : Response
+    public function show(DummyModelClass $DummyModelVariable): Response
     {
         //
     }
@@ -47,7 +47,7 @@ class DummyClass extends Controller
      * @param  \DummyFullModelClass  $DummyModelVariable
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DummyModelClass $DummyModelVariable) : Response
+    public function update(Request $request, DummyModelClass $DummyModelVariable): Response
     {
         //
     }
@@ -58,7 +58,7 @@ class DummyClass extends Controller
      * @param  \DummyFullModelClass  $DummyModelVariable
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DummyModelClass $DummyModelVariable) : Response
+    public function destroy(DummyModelClass $DummyModelVariable): Response
     {
         //
     }
