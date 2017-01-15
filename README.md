@@ -1,5 +1,3 @@
-Format:
-
 "Yet another informal Weekend project."
 
 Authors:
@@ -9,7 +7,7 @@ Authors:
 A composer package for Laravel and PHP 7:
 An artisan console command that creates web and RESTful api controllers, routes, and tests.
 
-syntax:
+Command:
 
 `artisan make:php7controller:for Mymodel Anothermodel Yetanothermodel --type=web`
 
