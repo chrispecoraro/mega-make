@@ -1,0 +1,18 @@
+<?php
+
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+
+class DummyModelClassApiRoutesTest extends TestCase
+{
+    /**
+     * Routes testing for DummyModelPluralVariable.
+     *
+     * @return void
+     */
+    public function testDummyModelPluralVariableIndex()
+    {
+       $this->visit('/DummyModelPluralVariable')->assertResponseOk();
+    }
+}
