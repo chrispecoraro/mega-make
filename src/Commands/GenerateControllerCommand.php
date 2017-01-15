@@ -22,6 +22,8 @@ class GenerateControllerCommand extends ControllerMakeCommand
      */
     protected $description = 'Generate PHP7-based controllers';
 
+    private $pluralVariableName = '';
+
     /**
      * Get the desired class name from the input.
      *
@@ -81,7 +83,7 @@ class GenerateControllerCommand extends ControllerMakeCommand
     {
         $stub = $this->files->get($this->getRouteStub());
         $file = $this->replaceClass($stub, $name);
-        return str_replace('DummyModelPluralVariable', $this->getPluralVariableNameFromClass($model), $file);
+        return str_replace('DummyModelPluralVariable', $this->getPluralVariableName(), $file);
     }
 
     /**
@@ -91,7 +93,7 @@ class GenerateControllerCommand extends ControllerMakeCommand
     protected function buildTest(string $model) : string
     {
         $stub = $this->files->get($this->getTestStub());
-        return str_replace(['DummyModelPluralVariable', 'DummyModelClass'], [$this->getPluralVariableNameFromClass($model), $model] , $stub);
+        return str_replace(['DummyModelPluralVariable', 'DummyModelClass'], [$this->getPluralVariableName(), $model] , $stub);
     }
 
     /**
@@ -105,7 +107,6 @@ class GenerateControllerCommand extends ControllerMakeCommand
      */
     protected function buildClassWithModel(string $name, string $model): string
     {
-
         $stub = $this->files->get($this->getControllerStub());
 
         $file = $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
@@ -113,11 +114,10 @@ class GenerateControllerCommand extends ControllerMakeCommand
         $controllerNamespace = $this->getNamespace($name);
 
         $replace = [];
-        $pluralVariableName = $this->getPluralVariableNameFromClass($model);
         $modelClass = $this->parseModel($model);
 
         $replace = [
-            'DummyModelPluralVariable' => $pluralVariableName,
+            'DummyModelPluralVariable' => $this->getPluralVariableName(),
             'DummyFullModelClass' => $modelClass,
             'DummyModelClass' => class_basename($modelClass),
             'DummyModelVariable' => lcfirst(class_basename($modelClass)),
@@ -135,6 +135,8 @@ class GenerateControllerCommand extends ControllerMakeCommand
     {
         $models = $this->getNameInput();
         foreach ($models as $model) {
+            $this->setPluralVariableName($model);
+
             $controllerName = str_plural($model) . 'Controller';
             $controllerNameWithPath = $this->parseName($controllerName);
 
@@ -175,12 +177,20 @@ class GenerateControllerCommand extends ControllerMakeCommand
     }
 
     /**
-     * @param string $model
-     * @return string
+     * @return string plural variable name
      */
-    private function getPluralVariableNameFromClass(string $model): string
+    private function getPluralVariableName(): string
     {
-        return str_plural(lcfirst(class_basename($model)));
+        return $this->pluralVariableName;
+    }
+
+    /**
+     * @param string $model
+     * @return null
+     */
+    private function setPluralVariableName(string $model)
+    {
+        $this->pluralVariableName = str_plural(lcfirst(class_basename($model)));
     }
 
 }
