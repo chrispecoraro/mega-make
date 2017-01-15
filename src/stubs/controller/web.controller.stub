@@ -22,7 +22,7 @@ class DummyClass extends Controller
     }
 
     /**
-     * Show the form for creating a new DummyModelPluralVariable.
+     * Show the form for creating a new DummyModelVariable.
      *
      * @return \Illuminate\View\View
      */
@@ -33,7 +33,7 @@ class DummyClass extends Controller
     }
 
     /**
-     * Store a newly created DummyModelPluralVariable in storage.
+     * Store a newly created DummyModelVariable in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -45,7 +45,7 @@ class DummyClass extends Controller
     }
 
     /**
-     * Display the specified DummyModelPluralVariable.
+     * Display the specified DummyModelVariable.
      *
      * @param  \DummyFullModelClass  $DummyModelVariable
      * @return \Illuminate\Http\Response
