@@ -48,7 +48,7 @@ class DummyClass extends Controller
      * Display the specified DummyModelVariable.
      *
      * @param  \DummyFullModelClass  $DummyModelVariable
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function show(DummyModelClass $DummyModelVariable): View
     {
