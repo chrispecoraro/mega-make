@@ -1,26 +1,27 @@
 <?php
 
-namespace ChrisPecoraro\LCG\Commands;
+namespace ChrisPecoraro\MM\Commands;
 
 use Illuminate\Routing\Console\ControllerMakeCommand;
+use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class GenerateControllerCommand extends ControllerMakeCommand
+class MegaMakeCommand extends ControllerMakeCommand
 {
     /**
      * The signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'make:php7controller:for {model*} {--type=}';
+    protected $signature = 'make:scaffold {model*} {--type=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Generate PHP7-based controllers';
+    protected $description = 'Generate scaffold for Laravel 5.5 entities';
 
     private $pluralVariableName = '';
 
@@ -122,8 +123,13 @@ class GenerateControllerCommand extends ControllerMakeCommand
             'DummyModelClass' => class_basename($modelClass),
             'DummyModelVariable' => lcfirst(class_basename($modelClass)),
         ];
-
         $replace["use {$controllerNamespace}\Controller;\n"] = '';
+        Artisan::call('make:model', ['name'=>$modelClass, '-a'=>true]);
+        Artisan::call('make:resource', ['name'=>$model. 'Resource' ]);
+        Artisan::call('make:resource', ['name'=>$model. 'ResourceCollection' ]);
+        Artisan::call('make:request', ['name'=>$model]);
+        Artisan::call('make:seeder', ['name'=>$model.'Seeder']);
+
 
         return str_replace(
             array_keys($replace), array_values($replace), $file
@@ -138,7 +144,7 @@ class GenerateControllerCommand extends ControllerMakeCommand
             $this->setPluralVariableName($model);
 
             $controllerName = str_plural($model) . 'Controller';
-            $controllerNameWithPath = $this->parseName($controllerName);
+            $controllerNameWithPath = $this->qualifyClass($controllerName);
 
             $path = $this->getPath($controllerNameWithPath);
 

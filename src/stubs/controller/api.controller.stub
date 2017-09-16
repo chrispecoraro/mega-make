@@ -1,65 +1,84 @@
 <?php
+
 namespace DummyNamespace;
 
 use DummyFullModelClass;
+use DummyRootNamespaceHttp\Controllers\Controller;
+use DummyRootNamespaceHttp\Resources\DummyModelClassResource;
+use DummyRootNamespaceHttp\Resources\DummyModelClassResourceCollection;
+use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use DummyRootNamespaceHttp\Controllers\Controller;
 
 class DummyClass extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the DummyModelClass resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): Response
+    public function index(): ResourceCollection
     {
-        return DummyModelClass::all();
+        return new DummyModelClassResourceCollection(DummyModelClass::all());
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created DummyModelClass resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request): Response
     {
-        //
+        $input = $request->validate([
+            // TODO
+            // write validator
+        ]);
+        $DummyModelVariable = DummyModelClass::create($input->toArray());
+
+        return response($DummyModelVariable, 201);
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified DummyModelClass resource.
      *
-     * @param  \DummyFullModelClass  $DummyModelVariable
+     * @param  \DummyFullModelClass $DummyModelVariable
      * @return \Illuminate\Http\Response
      */
-    public function show(DummyModelClass $DummyModelVariable): Response
+    public function show(DummyModelClass $DummyModelVariable): Resource
     {
-        //
+        return new DummyModelClassResource($DummyModelVariable);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified DummyModelClass resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \DummyFullModelClass  $DummyModelVariable
+     * @param  \Illuminate\Http\Request $request
+     * @param  \DummyFullModelClass $DummyModelVariable
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, DummyModelClass $DummyModelVariable): Response
     {
-        //
+        $input = $request->validate([
+            // TODO
+            // write validator
+        ]);
+        $DummyModelVariable->update($input->toArray());
+        $DummyModelVariable->save();
+
+        return response($DummyModelVariable, 202);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified DummyModelClass resource from storage.
      *
-     * @param  \DummyFullModelClass  $DummyModelVariable
+     * @param  \DummyFullModelClass $DummyModelVariable
      * @return \Illuminate\Http\Response
      */
     public function destroy(DummyModelClass $DummyModelVariable): Response
     {
-        //
+        $DummyModelVariable->destroy();
+        return response(trans('$DummyModelVariable has been deleted'),200);
     }
 }

@@ -1,6 +1,6 @@
 {
-  "name": "chrispecoraro/laravel-controller-generator",
-  "description": "Laravel generators to generate scaffolding using PHP 7.x",
+  "name": "chrispecoraro/mega-make",
+  "description": "\"php artisan make:scaffold\" for Laravel 5.5+ and PHP 7.x",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ChrisPecoraro\\LCG\\": "src/"
+      "ChrisPecoraro\\MM\\": "src/"
     }
   }
 }
