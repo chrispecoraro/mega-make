@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DummyModelClassApiRoutesTest extends TestCase
 {
@@ -13,6 +14,6 @@ class DummyModelClassApiRoutesTest extends TestCase
      */
     public function testDummyModelPluralVariableIndex()
     {
-       $this->visit('/DummyModelPluralVariable')->assertResponseOk();
+       $this->get('/DummyModelPluralVariable')->assertResponseOk();
     }
 }

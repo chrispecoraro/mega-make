@@ -124,12 +124,12 @@ class MegaMakeCommand extends ControllerMakeCommand
             'DummyModelVariable' => lcfirst(class_basename($modelClass)),
         ];
         $replace["use {$controllerNamespace}\Controller;\n"] = '';
-        Artisan::call('make:model', ['name'=>$modelClass, '-a'=>true]);
+        Artisan::call('make:model', ['name'=>$modelClass, '-f'=>true, '-m'=>true, '-r'=>true]);
         Artisan::call('make:resource', ['name'=>$model. 'Resource' ]);
         Artisan::call('make:resource', ['name'=>$model. 'ResourceCollection' ]);
         Artisan::call('make:request', ['name'=>$model]);
         Artisan::call('make:seeder', ['name'=>$model.'Seeder']);
-
+        Artisan::call('make:seeder', ['name'=>$model.'Seeder']);
 
         return str_replace(
             array_keys($replace), array_values($replace), $file
@@ -155,8 +155,12 @@ class MegaMakeCommand extends ControllerMakeCommand
 
             $this->makeDirectory($path);
             $this->files->put($path, $this->buildClassWithModel($controllerNameWithPath, $model));
-            $this->files->append('routes/'.$this->option('type') . '.php', "\n" . $this->buildRoute($controllerNameWithPath, $model));
-            $this->files->put('tests/'. $model . ucfirst($this->option('type')) . 'RoutesTest.php', $this->buildTest($model));
+            $type = 'api';
+            if ($this->option('type') != '')  {
+                $type = $this->option('type');
+            }
+            $this->files->append('routes/' . $type . '.php', "\n" . $this->buildRoute($controllerNameWithPath, $model));
+            $this->files->put('tests/Feature/'. $model . ucfirst($type) . 'RoutesTest.php', $this->buildTest($model));
 
         }
         $this->info('Controllers successfully built for ' . implode(', ', $models) . '.');
