@@ -124,12 +124,14 @@ class MegaMakeCommand extends ControllerMakeCommand
             'DummyModelVariable' => lcfirst(class_basename($modelClass)),
         ];
         $replace["use {$controllerNamespace}\Controller;\n"] = '';
-        Artisan::call('make:model', ['name'=>$modelClass, '-f'=>true, '-m'=>true, '-r'=>true]);
+        Artisan::call('make:model', ['name'=>class_basename($modelClass)]);
+        Artisan::call('make:factory', ['name'=>class_basename($modelClass) . 'Factory']);
+        Artisan::call('make:migration', ['name'=>'create_'. lcfirst(class_basename($modelClass)) . '_table']);
         Artisan::call('make:resource', ['name'=>$model. 'Resource' ]);
         Artisan::call('make:resource', ['name'=>$model. 'ResourceCollection' ]);
         Artisan::call('make:request', ['name'=>$model]);
         Artisan::call('make:seeder', ['name'=>$model.'Seeder']);
-
+        // TODO add seeder to DatabaseSeeder.php
         return str_replace(
             array_keys($replace), array_values($replace), $file
         );
