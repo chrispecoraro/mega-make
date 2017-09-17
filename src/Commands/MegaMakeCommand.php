@@ -129,7 +129,6 @@ class MegaMakeCommand extends ControllerMakeCommand
         Artisan::call('make:resource', ['name'=>$model. 'ResourceCollection' ]);
         Artisan::call('make:request', ['name'=>$model]);
         Artisan::call('make:seeder', ['name'=>$model.'Seeder']);
-        Artisan::call('make:seeder', ['name'=>$model.'Seeder']);
 
         return str_replace(
             array_keys($replace), array_values($replace), $file
@@ -163,7 +162,7 @@ class MegaMakeCommand extends ControllerMakeCommand
             $this->files->put('tests/Feature/'. $model . ucfirst($type) . 'RoutesTest.php', $this->buildTest($model));
 
         }
-        $this->info('Controllers successfully built for ' . implode(', ', $models) . '.');
+        $this->info('Scaffold successfully built for ' . implode(', ', $models) . '.');
     }
 
     /**
