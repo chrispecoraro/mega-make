@@ -13,7 +13,7 @@ This artisan command creates all possible parts of an entity and adds boilerplat
 * A Model
 * A Model Factory
 * A Seeder
-* A A Migration
+* A Migration
 * A Resource Controller
 * A Single API Resource
 * An API Resource Collection
