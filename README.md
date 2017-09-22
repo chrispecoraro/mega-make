@@ -6,15 +6,15 @@ Authors:
 
 `php artisan make:` on steroids.
 
-A composer package for Laravel 5.5+ and PHP 7.x:
-An artisan command which creates all of possible parts of an entity.
+A Laravel 5.5 composer package
 
+This artisan command creates all possible parts of an entity and adds boilerplate code and //TODO's, giving developers an extra boot and and eliminates extra typing.
 
 * A Model
 * A Model Factory
 * A Seeder
-* A Migration
-* Resource Controller
+* A A Migration
+* A Resource Controller
 * A Single API Resource
 * An API Resource Collection
 * A Test
