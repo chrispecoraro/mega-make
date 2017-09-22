@@ -1,14 +1,10 @@
-*Megamake for Laravel*
-
-Authors:
-* [Christopher Pecoraro](https://github.com/chris__pecoraro)
-* [Dylan De Souza](https://github.com/dylan-dpc)
+## Megamake for Laravel
 
 `php artisan make:` on steroids.
 
 A Laravel 5.5 composer package
 
-This artisan command creates all possible parts of an entity and adds boilerplate code and //TODO's, giving developers an extra boot and and eliminates extra typing.
+An artisan command to create most of the various pieces of a Laravel 5.5 entity and adds boilerplate code and `//TODO`'s, giving developers an extra boost, eliminating extra typing.
 
 * A Model
 * A Model Factory
@@ -21,7 +17,11 @@ This artisan command creates all possible parts of an entity and adds boilerplat
 
 Command:
 
-`artisan make:scaffold Foo Bar Shoe Sock`
+`artisan mega:make Post Comment Photo`
 
+
+Authors:
+* [Christopher Pecoraro](https://github.com/chrispecoraro) - [@chris__pecoraro](https://twitter.com/chris__pecoraro)
+* [Dylan De Souza](https://github.com/dylan-dpc) - [@dpc_22](https://twitter.com/dpc_22)
 
 _This package was created in loving memory of my father, Dr. George Anthony Pecoraro._
