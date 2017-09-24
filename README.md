@@ -1,10 +1,41 @@
 ## Megamake for Laravel
 
-`php artisan make:` on steroids.
+Laravel's `php artisan make:` on steroids
 
-A Laravel 5.5 composer package
+`artisan mega:make Department` produces:
 
-An artisan command to create most of the various pieces of a Laravel 5.5 entity and adds boilerplate code and `//TODO`'s, giving developers an extra boost, eliminating extra typing.
+
+```php
+ /**
+     * Display a listing of the Department resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(): ResourceCollection
+    {
+        return new DepartmentResourceCollection(Department::all());
+    }
+
+    /**
+     * Store a newly created Department resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request): Response
+    {
+        $input = $request->validate([
+            // TODO
+            // write validator
+        ]);
+        $department = Department::create($input->toArray());
+
+        return response($department, 201);
+    }
+
+```
+
+The `mega:make` artisan command creates most of the various pieces of a Laravel 5.5 entity, adding boilerplate code and `//TODO`'s, giving you an extra boost, eliminating extra typing.
 
 * A Model
 * A Model Factory
@@ -14,11 +45,6 @@ An artisan command to create most of the various pieces of a Laravel 5.5 entity 
 * A Single API Resource
 * An API Resource Collection
 * A Test
-
-Command:
-
-`artisan mega:make Post Comment Photo`
-
 
 Authors:
 * [Christopher Pecoraro](https://github.com/chrispecoraro) - [@chris__pecoraro](https://twitter.com/chris__pecoraro)
