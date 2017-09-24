@@ -2,19 +2,23 @@
 
 namespace ChrisPecoraro\MM\Commands;
 
+use Illuminate\Console\GeneratorCommand;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Console\ControllerMakeCommand;
+use Illuminate\Foundation\Console\ModelMakeCommand;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
-class MegaMakeCommand extends ControllerMakeCommand
+class MegaMakeCommand extends GeneratorCommand
 {
     /**
      * The signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'make:scaffold {model*} {--type=}';
+    protected $signature = 'mega:make {model*} {--type=}';
 
     /**
      * The console command description.
@@ -24,6 +28,23 @@ class MegaMakeCommand extends ControllerMakeCommand
     protected $description = 'Generate scaffold for Laravel 5.5 entities';
 
     private $pluralVariableName = '';
+    private $modelMakeCommand;
+    private $controllerMakeCommand;
+
+    /**
+     * MegaMakeCommand constructor.
+     *
+     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Foundation\Console\ModelMakeCommand $modelMakeCommand
+     * @param \Illuminate\Routing\Console\ControllerMakeCommand $controllerMakeCommand
+     */
+    public function __construct(Filesystem $filesystem, ModelMakeCommand $modelMakeCommand, ControllerMakeCommand $controllerMakeCommand)
+    {
+        parent::__construct($filesystem);
+        $this->files = $filesystem;
+        $this->modelMakeCommand = $modelMakeCommand;
+        $this->controllerMakeCommand = $controllerMakeCommand;
+    }
 
     /**
      * Get the desired class name from the input.
@@ -33,6 +54,33 @@ class MegaMakeCommand extends ControllerMakeCommand
     protected function getNameInput()
     {
         return $this->argument('model');
+    }
+
+    /**
+     * Get the default controller namespace for the class.
+     *
+     * @param  string  $rootNamespace
+     * @return string
+     */
+    protected function getDefaultControllerNamespace($rootNamespace)
+    {
+        return $rootNamespace.'\Http\Controllers';
+    }
+
+    /**
+     * Get the default model namespace for the class.
+     *
+     * @param  string  $rootNamespace
+     * @return string
+     */
+    protected function getDefaultModelNamespace($rootNamespace)
+    {
+        return $rootNamespace.'\\';
+    }
+
+    protected function getStub()
+    {
+        // TODO: Implement getStub() method.
     }
 
     /**
@@ -47,6 +95,17 @@ class MegaMakeCommand extends ControllerMakeCommand
         }
         return __DIR__ . '/../stubs/controller/api.controller.stub';
     }
+
+    /**
+     * Get the model stub file for the generator.
+     *
+     * @return string
+     */
+    protected function getModelStub(): string
+    {
+        return __DIR__ . '/../stubs/model/model.stub';
+    }
+
 
     /**
      * Get the route stub file for the generator.
@@ -88,6 +147,29 @@ class MegaMakeCommand extends ControllerMakeCommand
     }
 
     /**
+     * Get the fully-qualified model class name.
+     *
+     * @param  string  $model
+     * @return string
+     */
+    protected function parseModel($model)
+    {
+        if (preg_match('([^A-Za-z0-9_/\\\\])', $model)) {
+            throw new InvalidArgumentException('Model name contains invalid characters.');
+        }
+
+        $model = trim(str_replace('/', '\\', $model), '\\');
+
+        if (! Str::startsWith($model, $rootNamespace = $this->laravel->getNamespace())) {
+            $model = $rootNamespace.$model;
+        }
+
+        return $model;
+    }
+
+
+
+    /**
      * @param string $model
      * @return string
      */
@@ -108,14 +190,11 @@ class MegaMakeCommand extends ControllerMakeCommand
      */
     protected function buildClassWithModel(string $name, string $model): string
     {
-        $stub = $this->files->get($this->getControllerStub());
 
-        $file = $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
-
+        $modelClass = $this->qualifyClass($model);
+        $controllerStub = $this->files->get($this->getControllerStub());
+        $controllerFile = $this->replaceNamespace($controllerStub, $name)->replaceClass($controllerStub, $name);
         $controllerNamespace = $this->getNamespace($name);
-
-        $replace = [];
-        $modelClass = $this->parseModel($model);
 
         $replace = [
             'DummyModelPluralVariable' => $this->getPluralVariableName(),
@@ -124,7 +203,7 @@ class MegaMakeCommand extends ControllerMakeCommand
             'DummyModelVariable' => lcfirst(class_basename($modelClass)),
         ];
         $replace["use {$controllerNamespace}\Controller;\n"] = '';
-        Artisan::call('make:model', ['name'=>class_basename($modelClass)]);
+        //Artisan::call('make:model', ['name'=>class_basename($modelClass)]);
         Artisan::call('make:factory', ['name'=>class_basename($modelClass) . 'Factory']);
         Artisan::call('make:migration', ['name'=>'create_'. lcfirst(class_basename($modelClass)) . '_table']);
         Artisan::call('make:resource', ['name'=>$model. 'Resource' ]);
@@ -133,9 +212,35 @@ class MegaMakeCommand extends ControllerMakeCommand
         Artisan::call('make:seeder', ['name'=>$model.'Seeder']);
         // TODO add seeder to DatabaseSeeder.php
         return str_replace(
-            array_keys($replace), array_values($replace), $file
+            array_keys($replace), array_values($replace), $controllerFile
         );
 
+    }
+
+    /**
+     * Get the destination class path.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function getControllerPath($name)
+    {
+        $name = Str::replaceFirst($this->rootNamespace(), '', $name);
+
+        return $this->laravel['path'].'/Http/Controllers/'.str_replace('\\', '/', $name).'.php';
+    }
+
+    /**
+     * Get the destination class path.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    protected function getModelPath($name)
+    {
+        $name = Str::replaceFirst($this->rootNamespace(), '', $name);
+
+        return $this->laravel['path'].'/'.str_replace('\\', '/', $name).'.php';
     }
 
     public function handle()
@@ -144,18 +249,42 @@ class MegaMakeCommand extends ControllerMakeCommand
         foreach ($models as $model) {
             $this->setPluralVariableName($model);
 
+            $modelNameWithPath = $this->qualifyClass($model);
+            $modelPath = $this->getModelPath($modelNameWithPath);
+            $modelStub = $this->files->get($this->getModelStub());
+            $modelClass = $this->qualifyClass($model);
+            $modelNameWithPath = $this->qualifyClass($model);
+            $modelFile = $this->replaceNamespace($modelStub, $modelNameWithPath)->replaceClass($modelStub, $model);
+
+            $modelNamespace = $this->getDefaultModelNamespace($this->rootNamespace());
+
+            $replace = [
+                'DummyModelPluralVariable' => $this->getPluralVariableName(),
+                'DummyFullModelClass' => $modelClass,
+                'DummyModelClass' => class_basename($modelClass),
+                'DummyModelVariable' => lcfirst(class_basename($modelClass)),
+                'DummyNamespace'=> $modelNamespace
+            ];
+
+            $modelFile = str_replace(
+                array_keys($replace), array_values($replace), $modelFile
+            );
+
+            $this->makeDirectory($modelPath);
+            $this->files->put($modelPath, $modelFile);
+
             $controllerName = str_plural($model) . 'Controller';
             $controllerNameWithPath = $this->qualifyClass($controllerName);
-
-            $path = $this->getPath($controllerNameWithPath);
+            $controllerPath = $this->getControllerPath($controllerNameWithPath);
 
             if ($this->alreadyExists($controllerName)) {
                 $this->error($this->type . ' already exists!');
                 return false;
             }
 
-            $this->makeDirectory($path);
-            $this->files->put($path, $this->buildClassWithModel($controllerNameWithPath, $model));
+            $this->makeDirectory($controllerPath);
+            $this->files->put($controllerPath, $this->buildClassWithModel($controllerNameWithPath, $model));
+
             $type = 'api';
             if ($this->option('type') != '')  {
                 $type = $this->option('type');
