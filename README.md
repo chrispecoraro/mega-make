@@ -48,6 +48,6 @@ The `mega:make` artisan command creates most of the various pieces of a Laravel 
 
 Authors:
 * [Christopher Pecoraro](https://github.com/chrispecoraro) - [@chris__pecoraro](https://twitter.com/chris__pecoraro)
-* [Dylan De Souza](https://github.com/dylan-dpc) - [@dpc_22](https://twitter.com/dpc_22)
+* [Dylan De Souza](https://github.com/dylan-dpc) - [@DPC_22](https://twitter.com/dpc_22)
 
 _This package was created in loving memory of my father, Dr. George Anthony Pecoraro._
